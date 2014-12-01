@@ -1,4 +1,4 @@
-# Finapi
+# FinAPI
 
 A [JSON API](http://jsonapi.org/) Implementation for Scala, powered by [Finagle](https://twitter.github.io/finagle/).
 
