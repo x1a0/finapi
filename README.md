@@ -4,20 +4,48 @@ A [JSON API](http://jsonapi.org/) Implementation for Scala, powered by [Finagle]
 
 ## How to use
 
+Add this project as dependency with SBT, in `project/Build.scala`:
+
+```scala
+import sbt._
+
+object MyBuild extends Build {
+  lazy val root = Project("root", file(".")) dependsOn(finapi)
+  lazy val finapi = RootProject(uri("git://github.com/x1a0/finapi.git"))
+}
+```
+
 Define a `finapi.Resource`:
 
-    import net.x1a0.finapi.Resource
+```scala
+import net.x1a0.finapi.Resource
 
-    case class Article(
-      id: String,
-      title: String
-    ) extends Resource
+case class Article(
+  id: String,
+  title: String
+) extends Resource
+```
 
 Then you can create a useless API:
 
-    import net.x1a0.finapi.Api
+```scala
+import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.{Http, Filter}
+import com.twitter.util.Await
+import net.x1a0.finapi.Api
+import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 
-    val api = new Api[Article]("v1")
+object Server extends App {
+  val nettyToFinagle =
+    Filter.mk[HttpRequest, HttpResponse, Request, Response] { (req, service) =>
+    service(Request(req)) map { _.httpResponse }
+  }
+
+  val api = new Api[Article]("v1")
+  val server = Http.serve(":8080", nettyToFinagle andThen api)
+  Await.ready(server)
+}
+```
 
 This generates endpoints:
 
@@ -29,28 +57,30 @@ This generates endpoints:
 
 To make a more useful API, extend `finapi.Api` and override corresponding methods:
 
-    class ArticleApi extends Api[Article] {
+```scala
+class ArticleApi extends Api[Article] {
 
-      override def list(implicit req: Request): Future[Either[Error, Seq[Article]]] = {
-        ...
-      }
+  override def list(implicit req: Request): Future[Either[Error, Seq[Article]]] = {
+    ???
+  }
 
-      override def one(id: String)(implicit req: Request): Future[Either[Error, Option[Article]]] = {
-        ...
-      }
+  override def one(id: String)(implicit req: Request): Future[Either[Error, Option[Article]]] = {
+    ???
+  }
 
-      override def create(data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, (String, Option[Article])]] = {
-        ...
-      }
+  override def create(data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, (String, Option[Article])]] = {
+    ???
+  }
 
-      override def update(id: String, data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, Option[Article]]] = {
-        ...
-      }
+  override def update(id: String, data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, Option[Article]]] = {
+    ???
+  }
 
-      override def delete(id: String)(implicit req: Request): Future[Either[Error, Unit]] = {
-        ...
-      }
-    }
+  override def delete(id: String)(implicit req: Request): Future[Either[Error, Unit]] = {
+    ???
+  }
+}
+```
 
 Check tests to see more examples.
 
