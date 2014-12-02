@@ -1,3 +1,7 @@
+import sbtrelease._
+
+import ReleaseStateTransformations._
+
 name := "finapi"
 
 organization := "net.x1a0"
@@ -22,3 +26,14 @@ scalacOptions ++= Seq(
 )
 
 releaseSettings
+
+ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  setNextVersion,
+  commitNextVersion
+)
