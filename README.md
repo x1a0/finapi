@@ -2,6 +2,8 @@
 
 A [JSON API](http://jsonapi.org/) Implementation for Scala, powered by [Finagle](https://twitter.github.io/finagle/).
 
+[![Build Status](https://api.travis-ci.org/x1a0/finapi.svg?branch=master)](https://travis-ci.org/x1a0/finapi)
+
 ## How to use
 
 Add this project as dependency with SBT, in `project/Build.scala`:
