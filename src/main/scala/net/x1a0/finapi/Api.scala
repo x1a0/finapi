@@ -13,7 +13,8 @@ import org.json4s.jackson.Serialization.write
 import org.json4s.{JValue, JObject}
 import scala.util.{Try, Success, Failure}
 
-class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag[R]) extends Service[Request, Response] {
+class Api[R <: Resource, REQ <: Request](version: String)(implicit resourceTag: reflect.ClassTag[R])
+    extends Service[REQ, Response] {
 
   /** override to use custom name in JSON and URLs */
   val resourceName: String =
@@ -23,7 +24,7 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
 
   private[this] implicit val formats = DefaultFormats
 
-  def apply(request: Request): Future[Response] = {
+  def apply(request: REQ): Future[Response] = {
 
     /** GET     /v1/articles
       * GET     /v1/articles/<id>
@@ -43,7 +44,7 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
       case Get -> `prefix` =>
         list map {
           case Right(resources) =>
-            val res = req.response
+            val res = request.response
             res.contentType = "application/vnd.api+json"
             res.contentString = write(Map(resourceName -> resources))
             res
@@ -55,13 +56,13 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
       case Get -> `prefix` / id =>
         one(id) map {
           case Right(Some(resource)) =>
-            val res = req.response
+            val res = request.response
             res.contentType = "application/vnd.api+json"
             res.contentString = write(Map(resourceName -> resource))
             res
 
           case Right(None) =>
-            val res = req.response
+            val res = request.response
             res.status = NotFound
             res
 
@@ -74,7 +75,7 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
           error => Future.value(errorResponse(error)),
           json => create(json.map(_.extract[Map[String, Any]])) map {
             case Right((id, Some(resource))) =>
-              val res = req.response
+              val res = request.response
               res.status = Created
               res.contentType = "application/vnd.api+json"
               res.headerMap += ("Location" -> s"/$resourceName/$id")
@@ -82,7 +83,7 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
               res
 
             case Right((id, None)) =>
-              val res = req.response
+              val res = request.response
               res.status = Created
               res.headerMap += ("Location" -> s"/$resourceName/$id")
               res
@@ -97,14 +98,14 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
           error => Future.value(errorResponse(error)),
           json => update(id, json.map(_.extract[Map[String, Any]])) map {
             case Right(Some(resource)) =>
-              val res = req.response
+              val res = request.response
               res.status = Ok
               res.contentType = "application/vnd.api+json"
               res.contentString = write(Map(resourceName -> resource))
               res
 
             case Right(None) =>
-              val res = req.response
+              val res = request.response
               res.status = NoContent
               res
 
@@ -116,7 +117,7 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
       case Delete -> `prefix` / id =>
         delete(id) map {
           case Right(_) =>
-            val res = req.response
+            val res = request.response
             res.status = NoContent
             res
 
@@ -131,7 +132,7 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
     }
   }
 
-  private[this] def errorResponse(error: Error)(implicit req: Request): Response = {
+  private[this] def errorResponse(error: Error)(implicit req: REQ): Response = {
     val res = req.response
     res.status = error.status
     res.contentType = "application/vnd.api+json"
@@ -153,10 +154,10 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
     }
   }
 
-  def list(implicit req: Request): Future[Either[Error, Seq[R]]]
+  def list(implicit req: REQ): Future[Either[Error, Seq[R]]]
     = Future.value(Left(Error.NotImplemented))
 
-  def one(id: String)(implicit req: Request): Future[Either[Error, Option[R]]]
+  def one(id: String)(implicit req: REQ): Future[Either[Error, Option[R]]]
     = Future.value(Left(Error.NotImplemented))
 
   /** If this method returns the primary resource created, it will be
@@ -164,7 +165,7 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
     * and the client SHOULD treat the transmitted resource as accepted
     * without modification.
     */
-  def create(data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, (String, Option[R])]]
+  def create(data: Option[Map[String, Any]])(implicit req: REQ): Future[Either[Error, (String, Option[R])]]
     = Future.value(Left(Error.NotImplemented))
 
   /** If this method returns the primary resource updated, it will be
@@ -172,9 +173,9 @@ class Api[R <: Resource](version: String)(implicit resourceTag: reflect.ClassTag
     * and the client SHOULD treat the transmitted resource as accepted
     * without modification.
     */
-  def update(id: String, data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, Option[R]]]
+  def update(id: String, data: Option[Map[String, Any]])(implicit req: REQ): Future[Either[Error, Option[R]]]
     = Future.value(Left(Error.NotImplemented))
 
-  def delete(id: String)(implicit req: Request): Future[Either[Error, Unit]]
+  def delete(id: String)(implicit req: REQ): Future[Either[Error, Unit]]
     = Future.value(Left(Error.NotImplemented))
 }

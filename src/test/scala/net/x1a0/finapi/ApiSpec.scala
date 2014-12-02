@@ -20,7 +20,7 @@ class ApiSpec extends FreeSpec
 
   implicit val formats = DefaultFormats
 
-  class ArticleApi extends Api[Article]("v1") {
+  class ArticleApi extends Api[Article, Request]("v1") {
     self: ArticleStore =>
 
     override def list(implicit req: Request): Future[Either[Error, Seq[Article]]] = {
