@@ -60,25 +60,15 @@ To make a more useful API, extend `finapi.Api` and override corresponding method
 ```scala
 class ArticleApi extends Api[Article] {
 
-  override def list(implicit req: Request): Future[Either[Error, Seq[Article]]] = {
-    ???
-  }
+  override def list(implicit req: Request): Future[Either[Error, Seq[Article]]] = ???
 
-  override def one(id: String)(implicit req: Request): Future[Either[Error, Option[Article]]] = {
-    ???
-  }
+  override def one(id: String)(implicit req: Request): Future[Either[Error, Option[Article]]] = ???
 
-  override def create(data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, (String, Option[Article])]] = {
-    ???
-  }
+  override def create(data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, (String, Option[Article])]] = ???
 
-  override def update(id: String, data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, Option[Article]]] = {
-    ???
-  }
+  override def update(id: String, data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, Option[Article]]] = ???
 
-  override def delete(id: String)(implicit req: Request): Future[Either[Error, Unit]] = {
-    ???
-  }
+  override def delete(id: String)(implicit req: Request): Future[Either[Error, Unit]] = ???
 }
 ```
 
