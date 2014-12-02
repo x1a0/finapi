@@ -1,7 +1,5 @@
 name := "finapi"
 
-version := "1.0"
-
 organization := "net.x1a0"
 
 scalaVersion := "2.10.4"
@@ -22,3 +20,5 @@ scalacOptions ++= Seq(
   "-deprecation",
   "-feature"
 )
+
+releaseSettings
