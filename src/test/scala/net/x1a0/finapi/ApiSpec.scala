@@ -165,7 +165,7 @@ class ApiSpec extends FreeSpec
       }
 
       "MUST include a Location header matches href value of the resource" in {
-        res.headerMap("Location") shouldEqual "/articles/1"
+        res.headerMap("Location") shouldEqual "/v1/articles/1"
       }
 
       "SHOULD include a Content-Type header set to \"application/vnd.api+json\"" in {

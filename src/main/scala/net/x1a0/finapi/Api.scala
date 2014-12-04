@@ -78,7 +78,7 @@ class Api[R <: Resource, REQ <: Request](version: String)(implicit resourceTag: 
               val res = request.response
               res.status = Created
               res.contentType = "application/vnd.api+json"
-              res.headerMap += ("Location" -> s"/$resourceName/$id")
+              res.headerMap += ("Location" -> (prefix / id).toString)
               res.contentString = write(Map(resourceName -> resource))
               res
 
