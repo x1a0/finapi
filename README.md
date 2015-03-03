@@ -56,6 +56,7 @@ This generates endpoints:
     POST    /v1/articles
     PUT     /v1/articles/<id>
     DELETE  /v1/articles/<id>
+    DELETE  /v1/articles?foo=1&bar=2
 
 To make a more useful API, extend `finapi.Api` and override corresponding methods:
 
@@ -71,6 +72,8 @@ class ArticleApi extends Api[Article] {
   override def update(id: String, data: Option[Map[String, Any]])(implicit req: Request): Future[Either[Error, Option[Article]]] = ???
 
   override def delete(id: String)(implicit req: Request): Future[Either[Error, Unit]] = ???
+  
+  override def delete()(implicit req: Request): Future[Either[Error, Unit]] = ???
 }
 ```
 
