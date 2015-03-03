@@ -64,6 +64,15 @@ class ApiSpec extends FreeSpec
         _ => Future.value(Right(Unit))
       )
     }
+
+    override def delete()(implicit req: Request): Future[Either[Error, Unit]] = {
+      val id = req.params.get("id").get
+      store.get(id).fold[Future[Either[Error, Unit]]](
+        Future.value(Left(Error.ResourceNotFound))
+      )(
+        _ => Future.value(Right(Unit))
+      )
+    }
   }
 
   trait ArticleStore {
@@ -249,6 +258,30 @@ class ApiSpec extends FreeSpec
 
     "when specified resource does not exist" - {
       val req = Request(Delete, "/v1/articles/2")
+      val res = Await.result(api(req))
+
+      "SHOULD return 404 Not Found" in {
+        res.status shouldEqual NotFound
+      }
+    }
+  }
+
+  "DELETEs resources by params" - {
+    val api = new ArticleApi with ArticleStore {
+      store.update("1", Article("1", title = "Foo"))
+    }
+
+    "when specified resource is successfully deleted" - {
+      val req = Request(Delete, "/v1/articles?id=1")
+      val res = Await.result(api(req))
+
+      "MUST return 204 No Content" in {
+        res.status shouldEqual NoContent
+      }
+    }
+
+    "when specified resource does not exist" - {
+      val req = Request(Delete, "/v1/articles?id=2")
       val res = Await.result(api(req))
 
       "SHOULD return 404 Not Found" in {

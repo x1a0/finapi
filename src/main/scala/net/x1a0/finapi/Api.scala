@@ -125,6 +125,17 @@ class Api[R <: Resource, REQ <: Request](version: String)(implicit resourceTag: 
             errorResponse(error)
         }
 
+      case Delete -> `prefix` =>
+        delete() map {
+          case Right(_) =>
+            val res = request.response
+            res.status = NoContent
+            res
+
+          case Left(error) =>
+            errorResponse(error)
+        }
+
       case _ =>
         Future.value {
           errorResponse(ApiError(NotFound, "unrecognized url"))
@@ -177,5 +188,8 @@ class Api[R <: Resource, REQ <: Request](version: String)(implicit resourceTag: 
     = Future.value(Left(Error.NotImplemented))
 
   def delete(id: String)(implicit req: REQ): Future[Either[Error, Unit]]
+    = Future.value(Left(Error.NotImplemented))
+
+  def delete()(implicit req: REQ): Future[Either[Error, Unit]]
     = Future.value(Left(Error.NotImplemented))
 }
