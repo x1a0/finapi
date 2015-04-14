@@ -7,9 +7,9 @@ import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.Service
 import com.twitter.util.Future
 import org.atteo.evo.inflector.English
-import org.json4s.DefaultFormats
 import org.json4s.jackson.JsonMethods._
 import org.json4s.jackson.Serialization.write
+import org.json4s.{Formats, DefaultFormats}
 import org.json4s.{JValue, JObject}
 import scala.util.{Try, Success, Failure}
 
@@ -23,7 +23,7 @@ class Api[R <: Resource, REQ <: Request](version: String)(implicit resourceTag: 
   private[this] val prefix = Root / version / resourceName
 
   /** override to use custom formats **/
-  implicit val formats = DefaultFormats
+  implicit val formats: Formats = DefaultFormats
 
   def apply(request: REQ): Future[Response] = {
 
