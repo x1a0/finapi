@@ -22,7 +22,8 @@ class Api[R <: Resource, REQ <: Request](version: String)(implicit resourceTag: 
 
   private[this] val prefix = Root / version / resourceName
 
-  private[this] implicit val formats = DefaultFormats
+  /** override to use custom formats **/
+  implicit val formats = DefaultFormats
 
   def apply(request: REQ): Future[Response] = {
 
