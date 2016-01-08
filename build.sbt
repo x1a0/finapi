@@ -8,7 +8,7 @@ organization := "net.x1a0"
 
 scalaVersion := "2.10.4"
 
-val finagleVersion = "6.22.0"
+val finagleVersion = "6.24.0"
 
 libraryDependencies ++= Seq(
   "com.twitter"   %% "finagle-core"   % finagleVersion,
