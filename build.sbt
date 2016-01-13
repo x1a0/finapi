@@ -12,8 +12,8 @@ libraryDependencies ++= Seq(
   "com.twitter"   %% "finagle-core"   % finagleVersion,
   "com.twitter"   %% "finagle-http"   % finagleVersion,
   "org.atteo"     %  "evo-inflector"  % "1.2.1",
-  "org.json4s"    %% "json4s-core"    % "3.2.11",
-  "org.json4s"    %% "json4s-jackson" % "3.2.11",
+  "org.json4s"    %% "json4s-core"    % "3.3.0",
+  "org.json4s"    %% "json4s-jackson" % "3.3.0",
   "org.scalatest" %% "scalatest"      % "2.2.2" % "test",
   "org.mockito"   %  "mockito-all"    % "1.10.8" % "test"
 )
